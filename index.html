@@ -11,9 +11,7 @@
     <h1 id="title">Grab The Balls</h1>
   </header>
 
-  <!-- Everything the JS sizes/uses lives inside #game-wrap -->
   <main id="game-wrap" aria-label="Game area">
-    <!-- HUD -->
     <div id="hud" role="status" aria-live="polite">
       <div class="hud-item">Score: <span id="score">0</span></div>
       <div class="hud-item">Lives: <span id="lives">3</span></div>
@@ -21,20 +19,11 @@
       <div class="hud-item">Bonus: <span id="bonus">$0</span></div>
     </div>
 
-    <!-- Game board -->
     <div id="board">
       <canvas id="gameCanvas" width="900" height="506" aria-label="Game canvas"></canvas>
-
-      <!-- Centered watermark logo INSIDE the board (faded) -->
-      <img
-        id="logo-overlay"
-        src="assets/logo.png"
-        alt=""
-        aria-hidden="true"
-      />
+      <img id="logo-overlay" src="assets/logo.png" alt="" aria-hidden="true" />
     </div>
 
-    <!-- Controls -->
     <div id="controls">
       <button id="startButton" class="btn btn-primary" type="button">Start Game</button>
       <button id="resetButton" class="btn btn-primary" type="button">Reset</button>
