@@ -1,13 +1,12 @@
-/* Page background + global center */
 :root{
   --bg1:#f4b229;
   --bg2:#d68a10;
   --surface:#ffffff;
   --ink:#1c1c1c;
-  --accent:#d62e2e;       /* bright red buttons */
+  --accent:#d62e2e;
   --accent-ink:#fff;
   --ring: rgba(0,0,0,.25);
-  --wrap-max: 1140px;     /* keeps everything within view */
+  --wrap-max: 1140px;
   --gap: 16px;
 }
 
@@ -19,11 +18,10 @@ body{
   color:var(--ink);
   background: linear-gradient(180deg, var(--bg1), var(--bg2));
   min-height:100vh;
-
-  /* Center EVERYTHING on the page */
   display:flex;
   flex-direction:column;
   align-items:center;
+  overflow:hidden;              /* prevent page scroll */
 }
 
 /* Title */
@@ -35,23 +33,23 @@ body{
 }
 #title{
   margin:0;
-  font: 800 36px/1.15 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font: 800 36px/1.15 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
   text-align:center;
   letter-spacing:.5px;
 }
 
-/* Wrap that the JS uses to size the canvas. Keep it centered. */
+/* Wrap (kept centered) */
 #game-wrap{
   width: min(100%, var(--wrap-max));
   margin: 0 auto;
-  padding: 12px;
+  padding: 8px 12px 12px;
   display:flex;
   flex-direction:column;
-  align-items:center;      /* horizontal center of children */
+  align-items:center;
   gap: var(--gap);
 }
 
-/* HUD centered row of pills */
+/* HUD centered */
 #hud{
   display:flex;
   flex-wrap:wrap;
@@ -61,30 +59,31 @@ body{
   text-align:center;
 }
 .hud-item{
-  background: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.9);
   border:1px solid var(--ring);
   border-radius:999px;
   padding:8px 14px;
   font-weight:700;
 }
 
-/* Board holding the canvas + centered faded logo */
+/* Board + Canvas */
 #board{
   position:relative;
   width:100%;
   display:flex;
   justify-content:center;
 }
+
 canvas{
   display:block;
   border-radius:10px;
   background: var(--surface);
   box-shadow: 0 6px 24px rgba(0,0,0,.2);
   border: 2px solid var(--ring);
-  /* stays centered via parent flex */
+  /* size is controlled by JS for perfect fit, so no fixed height here */
 }
 
-/* Watermark logo centered inside the board */
+/* Watermark logo (faded) */
 #logo-overlay{
   position:absolute;
   left:50%;
@@ -92,21 +91,20 @@ canvas{
   transform: translate(-50%,-50%);
   width:min(52%, 520px);
   max-width:90%;
-  opacity:.15;              /* faint so balls are visible */
+  opacity:.15;                /* faint – balls remain visible */
   pointer-events:none;
   user-select:none;
 }
 
-/* Controls centered under the board */
+/* Controls centered */
 #controls{
   width:100%;
   display:flex;
-  justify-content:center;   /* center the buttons */
+  justify-content:center;
   gap:12px;
-  padding-bottom:12px;
+  padding-bottom:8px;
 }
 
-/* Buttons – bright red */
 .btn{
   appearance:none;
   border:none;
@@ -128,15 +126,15 @@ canvas{
   box-shadow: 0 3px 0 rgba(0,0,0,.25);
 }
 
-/* Hand cursor for the game surface */
+/* Bigger hand cursor (optional custom images) */
 #gameCanvas{
-  cursor: grab;
+  cursor: url("assets/cursor-hand-48.png") 10 2, grab;
 }
 #gameCanvas:active{
-  cursor: grabbing;
+  cursor: url("assets/cursor-grab-48.png") 10 6, grabbing;
 }
 
-/* Keep everything comfortably visible on small screens */
+/* Small screens */
 @media (max-width: 640px){
   #title{ font-size:28px; }
   .hud-item{ padding:6px 10px; }
