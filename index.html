@@ -1,67 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meatball Pop Game</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meatball Pop</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      margin: 20px 0;
-    }
-    #gameCanvas {
-      border: 2px solid #333;
-      background: #fff;
-      display: block;
-      margin: 20px auto;
-      max-width: 100%;
-      height: auto;
-    }
-    .hud {
-      font-size: 18px;
-      margin: 10px 0;
-    }
-    button {
-      font-size: 16px;
-      padding: 8px 16px;
-      margin: 5px;
-      cursor: pointer;
-      border: none;
-      border-radius: 5px;
-      background: #333;
-      color: #fff;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background: #555;
-    }
+    /* small top bar so this works even without styles.css */
+    #topbar {display:flex; align-items:center; gap:12px; justify-content:center; padding:10px;}
+    #logo {height:48px; width:auto; object-fit:contain;}
   </style>
 </head>
 <body>
-
-  <h1>🍝 Meatball Pop 🍝</h1>
-
-  <div class="hud">
-    Score: <span id="score">0</span> |
-    Lives: <span id="lives">3</span> |
-    Level: <span id="level">1</span>
+  <!-- Top bar with logo -->
+  <div id="topbar">
+    <img id="logo" src="assets/logo.png" alt="The Ball Joint" />
+    <h1>Meatball Pop</h1>
   </div>
 
+  <!-- HUD -->
+  <div class="hud">
+    Score: <span id="score">0</span>
+    &nbsp;|&nbsp; Lives: <span id="lives">3</span>
+    &nbsp;|&nbsp; Level: <span id="level">1</span>
+    &nbsp;|&nbsp; Bonus: <span id="bonus">0%</span>
+  </div>
+
+  <!-- Game -->
   <canvas id="gameCanvas" width="800" height="450"></canvas>
 
+  <!-- Controls -->
   <div>
     <button id="startButton">Start Game</button>
     <button id="resetButton">Reset</button>
   </div>
 
-  <!-- Load game logic at the very end -->
   <script src="game.js"></script>
 </body>
 </html>
