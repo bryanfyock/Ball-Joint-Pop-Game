@@ -1,34 +1,144 @@
-/* Title centered, no inline logo next to it */
-#topbar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 12px;
-}
-#title {
-  margin: 0;
-  font-size: clamp(26px, 4vw, 44px);
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-align: center;
+/* Page background + global center */
+:root{
+  --bg1:#f4b229;
+  --bg2:#d68a10;
+  --surface:#ffffff;
+  --ink:#1c1c1c;
+  --accent:#d62e2e;       /* bright red buttons */
+  --accent-ink:#fff;
+  --ring: rgba(0,0,0,.25);
+  --wrap-max: 1140px;     /* keeps everything within view */
+  --gap: 16px;
 }
 
-/* Hand cursor: grab by default, grabbing while pressed */
-#gameCanvas {
-  cursor: grab;            /* shows a hand */
-}
-#gameCanvas:active {
-  cursor: grabbing;        /* shows a “closed” hand while clicking/dragging */
+*{box-sizing:border-box;}
+html,body{height:100%;}
+
+body{
+  margin:0;
+  color:var(--ink);
+  background: linear-gradient(180deg, var(--bg1), var(--bg2));
+  min-height:100vh;
+
+  /* Center EVERYTHING on the page */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-/* (Optional) If you use red buttons again, keep them clearly red */
-.btn-primary,
-.btn-danger {
-  background: #d62828;
-  border: 1px solid #9b1f1f;
-  color: #fff;
+/* Title */
+.site-header{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:18px 12px 6px;
 }
-.btn-primary:hover,
-.btn-danger:hover {
-  filter: brightness(1.05);
+#title{
+  margin:0;
+  font: 800 36px/1.15 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  text-align:center;
+  letter-spacing:.5px;
+}
+
+/* Wrap that the JS uses to size the canvas. Keep it centered. */
+#game-wrap{
+  width: min(100%, var(--wrap-max));
+  margin: 0 auto;
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;      /* horizontal center of children */
+  gap: var(--gap);
+}
+
+/* HUD centered row of pills */
+#hud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.hud-item{
+  background: rgba(255,255,255,.85);
+  border:1px solid var(--ring);
+  border-radius:999px;
+  padding:8px 14px;
+  font-weight:700;
+}
+
+/* Board holding the canvas + centered faded logo */
+#board{
+  position:relative;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+canvas{
+  display:block;
+  border-radius:10px;
+  background: var(--surface);
+  box-shadow: 0 6px 24px rgba(0,0,0,.2);
+  border: 2px solid var(--ring);
+  /* stays centered via parent flex */
+}
+
+/* Watermark logo centered inside the board */
+#logo-overlay{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  width:min(52%, 520px);
+  max-width:90%;
+  opacity:.15;              /* faint so balls are visible */
+  pointer-events:none;
+  user-select:none;
+}
+
+/* Controls centered under the board */
+#controls{
+  width:100%;
+  display:flex;
+  justify-content:center;   /* center the buttons */
+  gap:12px;
+  padding-bottom:12px;
+}
+
+/* Buttons – bright red */
+.btn{
+  appearance:none;
+  border:none;
+  border-radius:10px;
+  padding:12px 18px;
+  font: 700 16px/1 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+  cursor: pointer;
+  transition: transform .05s ease, filter .15s ease;
+  user-select:none;
+}
+.btn-primary{
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 4px 0 rgba(0,0,0,.2);
+}
+.btn-primary:hover{ filter: brightness(1.05); }
+.btn-primary:active{
+  transform: translateY(1px);
+  box-shadow: 0 3px 0 rgba(0,0,0,.25);
+}
+
+/* Hand cursor for the game surface */
+#gameCanvas{
+  cursor: grab;
+}
+#gameCanvas:active{
+  cursor: grabbing;
+}
+
+/* Keep everything comfortably visible on small screens */
+@media (max-width: 640px){
+  #title{ font-size:28px; }
+  .hud-item{ padding:6px 10px; }
+  #logo-overlay{ width:min(62%, 460px); }
 }
