@@ -1,72 +1,63 @@
-// =============================
-// Meatball Pop (robust version)
-// =============================
+// =======================================
+// Meatball Pop — with Canvas Game Over UI
+// =======================================
 (() => {
-  // --- helpers ---
   const $ = (id) => document.getElementById(id);
 
   function wireUp() {
-    // Canvas / UI
+    // Elements (tolerant IDs for buttons)
     const canvas = $("gameCanvas");
-    const ctx = canvas ? canvas.getContext("2d") : null;
-
+    const ctx = canvas?.getContext("2d");
     const scoreEl = $("score");
     const livesEl = $("lives");
     const levelEl = $("level");
-
-    // Be tolerant to both id styles: startButton OR startBtn (same for reset)
     const startBtn = $("startButton") || $("startBtn");
     const resetBtn = $("resetButton") || $("resetBtn");
 
-    // Guard rails: tell us in the console exactly what’s missing
-    if (!canvas || !ctx) {
-      console.error("Canvas element with id='gameCanvas' not found.");
-      return;
-    }
-    if (!startBtn) {
-      console.error("Start button not found. Use id='startButton' (or 'startBtn').");
-      return;
-    }
-    if (!resetBtn) {
-      console.error("Reset button not found. Use id='resetButton' (or 'resetBtn').");
-      return;
-    }
-    if (!scoreEl || !livesEl || !levelEl) {
-      console.error("Missing one of score/lives/level spans (ids: score, lives, level).");
-      return;
-    }
+    // Guard rails
+    if (!canvas || !ctx) return console.error("Missing #gameCanvas");
+    if (!scoreEl || !livesEl || !levelEl)
+      return console.error("Missing HUD spans: #score, #lives, #level");
+    if (!startBtn) return console.error("Missing start button (#startButton)");
+    if (!resetBtn) return console.error("Missing reset button (#resetButton)");
 
-    // --- state ---
+    // State
     let score = 0;
     let lives = 3;
     let level = 1;
-    let gameRunning = false;
-    let loopId = 0;
+    let running = false;
+    let ended = false;         // game over flag
+    let rafId = 0;
     const meatballs = [];
 
-    function updateUI() {
+    // Asset
+    const meatballImg = new Image();
+    let imgReady = false;
+    meatballImg.onload  = () => { imgReady = true; };
+    meatballImg.onerror = () => { imgReady = false; console.error("Could not load assets/meatball.png"); };
+    meatballImg.src = "assets/meatball.png?v=" + Date.now(); // cache-bust
+
+    // Helpers
+    function updateHUD() {
       scoreEl.textContent = score;
       livesEl.textContent = lives;
       levelEl.textContent = level;
     }
 
-    // --- image asset ---
-    const meatballImg = new Image();
-    let imgReady = false;
-    meatballImg.onload = () => {
-      imgReady = true;
-      console.log("Meatball image loaded OK.");
-    };
-    meatballImg.onerror = (e) => {
-      imgReady = false;
-      console.error("Failed to load assets/meatball.png", e);
-    };
-    meatballImg.src = "assets/meatball.png?v=" + Date.now(); // cache-bust
+    function fitCanvas() {
+      const maxW = Math.min(980, document.body.clientWidth - 32);
+      const w = Math.max(360, maxW);
+      const h = Math.floor(w * 9 / 16);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      canvas.width = w;
+      canvas.height = h;
+    }
 
-    // --- meatball class ---
     class Meatball {
       constructor(x, y, r, vx, vy) {
-        this.x = x; this.y = y; this.r = r; this.vx = vx; this.vy = vy;
+        this.x = x; this.y = y; this.r = r;
+        this.vx = vx; this.vy = vy;
       }
       update() {
         this.x += this.vx;
@@ -78,14 +69,12 @@
         if (imgReady) {
           ctx.drawImage(meatballImg, this.x - this.r, this.y - this.r, this.r * 2, this.r * 2);
         } else {
-          // Fallback circle if image not ready
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
           ctx.fillStyle = "#a35300";
           ctx.strokeStyle = "#f0d7b3";
           ctx.lineWidth = 3;
-          ctx.fill();
-          ctx.stroke();
+          ctx.fill(); ctx.stroke();
         }
       }
       contains(mx, my) {
@@ -99,76 +88,123 @@
         const r = 34;
         const x = r + Math.random() * (canvas.width - 2 * r);
         const y = r + Math.random() * (canvas.height - 2 * r);
-        const vx = (Math.random() - 0.5) * (2 + level * 0.4);
-        const vy = (Math.random() - 0.5) * (2 + level * 0.4);
+        const v = 1.6 + level * 0.35; // speed increases by level
+        const vx = (Math.random() - 0.5) * v * 2;
+        const vy = (Math.random() - 0.5) * v * 2;
         meatballs.push(new Meatball(x, y, r, vx, vy));
       }
     }
 
-    function tick() {
+    function drawOverlay(title, subtitle) {
+      // darken
+      ctx.fillStyle = "rgba(0,0,0,0.6)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+
+      ctx.font = "700 44px Arial, sans-serif";
+      ctx.fillText(title, canvas.width / 2, canvas.height / 2 - 12);
+
+      ctx.font = "400 20px Arial, sans-serif";
+      ctx.fillText(subtitle, canvas.width / 2, canvas.height / 2 + 28);
+    }
+
+    function gameOver() {
+      running = false;
+      ended = true;
+      cancelAnimationFrame(rafId);
+      drawFrame(); // draw the last state
+      drawOverlay("Game Over", `Final Score: ${score} — Click anywhere to restart`);
+    }
+
+    function drawFrame() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      meatballs.forEach((m) => { m.update(); m.draw(); });
-      loopId = requestAnimationFrame(tick);
+      meatballs.forEach(m => { m.update(); m.draw(); });
+    }
+
+    function loop() {
+      drawFrame();
+      rafId = requestAnimationFrame(loop);
     }
 
     function startGame() {
-      if (gameRunning) return;
-      // size canvas responsively (safe default)
-      const maxW = Math.min(980, document.body.clientWidth - 32);
-      canvas.style.width = maxW + "px";
-      canvas.style.height = Math.floor(maxW * 9 / 16) + "px";
-      canvas.width = maxW;
-      canvas.height = Math.floor(maxW * 9 / 16);
-
-      // reset state
+      if (running) return;
+      ended = false;
+      fitCanvas();
       score = 0; lives = 3; level = 1;
       meatballs.length = 0;
       spawn(4);
-      updateUI();
-
-      gameRunning = true;
-      cancelAnimationFrame(loopId);
-      tick();
+      updateHUD();
+      running = true;
+      cancelAnimationFrame(rafId);
+      loop();
     }
 
     function resetGame() {
-      gameRunning = false;
-      cancelAnimationFrame(loopId);
+      running = false;
+      ended = false;
+      cancelAnimationFrame(rafId);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       score = 0; lives = 3; level = 1;
       meatballs.length = 0;
-      updateUI();
+      updateHUD();
     }
 
+    // Clicks: pop or lose a life; if lives reach 0 -> game over
     canvas.addEventListener("click", (ev) => {
-      if (!gameRunning) return;
+      if (ended) { startGame(); return; } // restart from overlay
+      if (!running) return;
+
       const rect = canvas.getBoundingClientRect();
       const mx = ev.clientX - rect.left;
       const my = ev.clientY - rect.top;
 
+      let hit = false;
       for (let i = meatballs.length - 1; i >= 0; i--) {
         if (meatballs[i].contains(mx, my)) {
           meatballs.splice(i, 1);
           score++;
-          if (score % 5 === 0) { level++; spawn(1); }
-          updateUI();
+          hit = true;
+
+          // simple progression: every 5 hits add a new meatball and level up
+          if (score % 5 === 0) {
+            level++;
+            spawn(1);
+          }
+          updateHUD();
           break;
         }
       }
-      // lose a life if you miss completely (optional)
-      // if no hit: lives--; if (lives <= 0) resetGame(); updateUI();
+
+      if (!hit) {
+        lives--;
+        updateHUD();
+        if (lives <= 0) gameOver();
+      }
     });
 
+    // Buttons
     startBtn.addEventListener("click", startGame);
     resetBtn.addEventListener("click", resetGame);
 
-    console.log("Game wired up. Click Start to play.");
+    // Responsive canvas
+    window.addEventListener("resize", () => {
+      if (!running && !ended) return;
+      fitCanvas();
+    });
+
+    // Initial HUD
+    updateHUD();
+    console.log("Meatball Pop ready. Click Start.");
   }
 
-  // Ensure DOM exists before wiring
+  // Ensure DOM is ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", wireUp, { once: true });
   } else {
     wireUp();
   }
 })();
+
+
