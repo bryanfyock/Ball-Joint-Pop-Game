@@ -41,7 +41,7 @@ if (!badge) {
 
 // ---------- Assets (your meatball art) ----------
 const meatballImg = new Image();
-let imgReady = false;
+meatballImg.src = "assets/meatball.png";
 
 // Use cache-buster only when served over HTTP(S). On file:// it breaks.
 const baseSrc = 'assets/meatball.png';
@@ -261,3 +261,4 @@ function loop(ts){
   gameRAF = requestAnimationFrame(loop);
 }
 // =======================================================================
+
