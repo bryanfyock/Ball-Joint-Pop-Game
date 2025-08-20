@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meatball Pop</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pop The Balls</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <!-- Top Bar with Logo -->
+  <!-- Top Bar -->
   <div id="topbar">
-    <img id="logo" src="assets/logo.png" alt="The Ball Joint Logo" />
-    <h1>Meatball Pop</h1>
+    <img id="logo" src="assets/logo.png" alt="The Ball Joint Logo"/>
+    <h1>Pop The Balls</h1>
   </div>
 
-  <!-- Heads-Up Display -->
+  <!-- HUD -->
   <div class="hud">
     Score: <span id="score">0</span> |
     Lives: <span id="lives">3</span> |
@@ -21,16 +21,18 @@
     Bonus: <span id="bonus">0%</span>
   </div>
 
-  <!-- Game Canvas -->
-  <canvas id="gameCanvas"></canvas>
+  <!-- Game area (wrapper holds centered watermark above the canvas) -->
+  <div id="game-wrap">
+    <img id="watermark" src="assets/logo.png" alt="Ball Joint watermark"/>
+    <canvas id="gameCanvas"></canvas>
+  </div>
 
   <!-- Controls -->
   <div id="controls">
-    <button id="startButton">Start Game</button>
-    <button id="resetButton">Reset</button>
+    <button id="startButton" class="btn-red">Start Game</button>
+    <button id="resetButton" class="btn-red btn-ghost">Reset</button>
   </div>
 
-  <!-- Game Logic -->
   <script src="game.js"></script>
 </body>
 </html>
