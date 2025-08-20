@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -7,28 +7,39 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header id="topbar">
+  <header class="site-header">
     <h1 id="title">Grab The Balls</h1>
   </header>
 
-  <div class="hud" id="hud">
-    <div class="hud-item">Score: <span id="score">0</span></div>
-    <div class="hud-item">Lives: <span id="lives">3</span></div>
-    <div class="hud-item">Level: <span id="level">1</span></div>
-    <div class="hud-item">Bonus: <span id="bonus">$0</span></div>
-  </div>
+  <!-- Everything the JS sizes/uses lives inside #game-wrap -->
+  <main id="game-wrap" aria-label="Game area">
+    <!-- HUD -->
+    <div id="hud" role="status" aria-live="polite">
+      <div class="hud-item">Score: <span id="score">0</span></div>
+      <div class="hud-item">Lives: <span id="lives">3</span></div>
+      <div class="hud-item">Level: <span id="level">1</span></div>
+      <div class="hud-item">Bonus: <span id="bonus">$0</span></div>
+    </div>
 
-  <!-- Game area wrapper keeps canvas sized and centered -->
-  <div id="game-wrap">
-    <!-- centered watermark logo is handled via CSS background on #game-wrap (already in your build);
-         keeping only the canvas here so the title area stays clean -->
-    <canvas id="gameCanvas"></canvas>
-  </div>
+    <!-- Game board -->
+    <div id="board">
+      <canvas id="gameCanvas" width="900" height="506" aria-label="Game canvas"></canvas>
 
-  <div id="controls">
-    <button id="startButton" class="btn btn-primary">Start Game</button>
-    <button id="resetButton" class="btn btn-danger">Reset</button>
-  </div>
+      <!-- Centered watermark logo INSIDE the board (faded) -->
+      <img
+        id="logo-overlay"
+        src="assets/logo.png"
+        alt=""
+        aria-hidden="true"
+      />
+    </div>
+
+    <!-- Controls -->
+    <div id="controls">
+      <button id="startButton" class="btn btn-primary" type="button">Start Game</button>
+      <button id="resetButton" class="btn btn-primary" type="button">Reset</button>
+    </div>
+  </main>
 
   <script src="game.js"></script>
 </body>
