@@ -1,36 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pop The Balls</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grab The Balls</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Top Bar -->
-  <div id="topbar">
-    <img id="logo" src="assets/logo.png" alt="The Ball Joint Logo"/>
-    <h1>Pop The Balls</h1>
+  <header id="topbar">
+    <h1 id="title">Grab The Balls</h1>
+  </header>
+
+  <div class="hud" id="hud">
+    <div class="hud-item">Score: <span id="score">0</span></div>
+    <div class="hud-item">Lives: <span id="lives">3</span></div>
+    <div class="hud-item">Level: <span id="level">1</span></div>
+    <div class="hud-item">Bonus: <span id="bonus">$0</span></div>
   </div>
 
-  <!-- HUD -->
-  <div class="hud">
-    Score: <span id="score">0</span> |
-    Lives: <span id="lives">3</span> |
-    Level: <span id="level">1</span> |
-    Bonus: <span id="bonus">0%</span>
-  </div>
-
-  <!-- Game area (wrapper holds centered watermark above the canvas) -->
+  <!-- Game area wrapper keeps canvas sized and centered -->
   <div id="game-wrap">
-    <img id="watermark" src="assets/logo.png" alt="Ball Joint watermark"/>
+    <!-- centered watermark logo is handled via CSS background on #game-wrap (already in your build);
+         keeping only the canvas here so the title area stays clean -->
     <canvas id="gameCanvas"></canvas>
   </div>
 
-  <!-- Controls -->
   <div id="controls">
-    <button id="startButton" class="btn-red">Start Game</button>
-    <button id="resetButton" class="btn-red btn-ghost">Reset</button>
+    <button id="startButton" class="btn btn-primary">Start Game</button>
+    <button id="resetButton" class="btn btn-danger">Reset</button>
   </div>
 
   <script src="game.js"></script>
